@@ -7,39 +7,99 @@
 
 ## Descripción
 
-Este proyecto presenta el desarrollo de un robot seguidor de línea basado en ESP32, ESP32-CAM y ROS2 Jazzy. El sistema utiliza visión artificial para detectar la posición de la trayectoria y generar comandos de movimiento que permiten el seguimiento autónomo de una línea.
+Sistema de seguimiento de línea basado en ESP32, ESP32-CAM, ROS2 Jazzy y Gazebo Sim.
 
-Además de la implementación física, se desarrolló una simulación en Gazebo para validar el comportamiento del sistema y verificar la comunicación entre los nodos ROS2.
+El sistema utiliza una ESP32-CAM para detectar la posición de la línea y transmitir comandos mediante UDP. ROS2 procesa la información y genera comandos de movimiento para el robot.
 
-## Tecnologías utilizadas
+## Requisitos
+
+### Hardware
 
 - ESP32
 - ESP32-CAM
+- Robot móvil
+- Sensores infrarrojos
+
+### Software
+
+- Ubuntu 24.04
 - ROS2 Jazzy
 - Gazebo Sim
-- Python
 - Arduino IDE
-
-## Componentes principales
-
-- ESP32 para control del robot.
-- ESP32-CAM para adquisición de imágenes.
-- Sensores infrarrojos para detección de línea.
-- Comunicación mediante ROS2.
-
-## Nodos ROS2 principales
-
-### vision_udp_node.py
-
-Recibe la información proveniente de la ESP32-CAM y publica el estado detectado de la línea.
-
-### motion_node.py
-
-Procesa la información recibida y genera comandos de velocidad para el robot.
 
 ## Estructura del repositorio
 
 ```text
 arduino/
-docs/
+├── avance.ino
+└── vision_espnow_cam.ino
+
 src/
+└── line_follower_ros/
+
+docs/
+```
+
+## Compilación del paquete ROS2
+
+```bash
+cd ~/robot_final_ws
+
+colcon build
+
+source install/setup.bash
+```
+
+## Ejecución de Gazebo
+
+```bash
+source /opt/ros/jazzy/setup.bash
+
+export TURTLEBOT3_MODEL=burger
+
+ros2 launch turtlebot3_gazebo empty_world.launch.py
+```
+
+## Ejecución de los nodos
+
+### Nodo de visión
+
+```bash
+source /opt/ros/jazzy/setup.bash
+
+cd ~/robot_final_ws
+
+source install/setup.bash
+
+ros2 run line_follower_ros vision_udp_node
+```
+
+### Nodo de movimiento
+
+```bash
+source /opt/ros/jazzy/setup.bash
+
+cd ~/robot_final_ws
+
+source install/setup.bash
+
+ros2 run line_follower_ros motion_node
+```
+
+## Nodos principales
+
+### vision_udp_node.py
+
+Recibe información proveniente de la ESP32-CAM y publica el estado detectado de la línea.
+
+### motion_node.py
+
+Procesa la información recibida y genera comandos de velocidad para el robot.
+
+## Resultados
+
+El sistema fue validado tanto en una plataforma física como en un entorno de simulación Gazebo, logrando el seguimiento autónomo de trayectorias mediante visión artificial.
+
+## Repositorio
+
+https://github.com/adriancussi-sudo/robot-line-follower-ros2
